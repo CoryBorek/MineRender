@@ -8,10 +8,6 @@ var THREE_HASH = "sha256-NGC9JEuTWN4GhTj091wctgjzftr+8WNDmw0H8J5YPYE=";
 
 
 var randomSkins;
-var randomBlocks;
-var randomItems;
-var randomEntities;
-var randomResourcePacks;
 
 function getRandomSkin() {
     var skin = randomSkins.splice(Math.floor(Math.random() * randomSkins.length), 1)[0];
@@ -28,21 +24,6 @@ function getRandomSkin() {
     }
 }
 
-function getRandomBlock() {
-    return randomBlocks.splice(Math.floor(Math.random() * randomBlocks.length), 1)[0];
-}
-
-function getRandomItem() {
-    return randomItems.splice(Math.floor(Math.random() * randomItems.length), 1)[0];
-}
-
-function getRandomEntity() {
-    return randomEntities.splice(Math.floor(Math.random() * randomEntities.length), 1)[0];
-}
-
-function getRandomResourcePack() {
-    return randomResourcePacks.splice(Math.floor(Math.random() * randomResourcePacks.length), 1)[0];
-}
 
 function renderSkinShowcases() {
     var renders = [];
@@ -95,227 +76,7 @@ function renderSkinShowcases() {
     }
 }
 
-function renderBlockShowcases() {
-    var renders = [];
-    for (var i = 0; i < 3; i++) {
-        var block = getRandomBlock();
-        var element = $("#blockExample" + (i + 1));
-        $("#blockName" + (i + 1)).text(block);
-        $("#blockName" + (i + 1)).parent().attr("href", "https://mcasset.cloud/1.13/assets/minecraft/blockstates/" + block + ".json")
-        var modelRender = new ModelRender({
-            autoResize: true,
-            canvas: {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
-            },
-            centerCubes: true,
-            controls: {
-                enabled: true,
-                zoom: false,
-                rotate: true,
-                pan: true
-            },
-            forceContext: true
-        }, element[0]);
-        (function (modelRender, block, i) {
-            setTimeout(function () {
-                modelRender.render([{
-                    blockstate: block
-                }], function () {
-                    $("#blockPlaceholder" + (i + 1)).remove();
-                })
-            }, 200 * i);
-        })(modelRender, block, i);
-        element.on("modelRender", function (e) {
-            let models = e.detail.models;
-            for (var j = 0; j < models.length; j++) {
-                models[j].rotation.y += 0.01;
-            }
-        })
-        renders[i] = modelRender;
-    }
-}
 
-
-function renderItemShowcases() {
-    var renders = [];
-    for (var i = 0; i < 3; i++) {
-        var item = getRandomItem();
-        var element = $("#itemExample" + (i + 1));
-        $("#itemName" + (i + 1)).text(item);
-        $("#itemName" + (i + 1)).parent().attr("href", "https://mcasset.cloud/1.13/assets/minecraft/models/item/" + item + ".json")
-        var modelRender = new ModelRender({
-            autoResize: true,
-            canvas: {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
-            },
-            centerCubes: true,
-            controls: {
-                enabled: true,
-                zoom: false,
-                rotate: true,
-                pan: true
-            },
-            forceContext: true
-        }, element[0]);
-        (function (modelRender, item, i) {
-            setTimeout(function () {
-                modelRender.render(["item/" + item], function () {
-                    $("#itemPlaceholder" + (i + 1)).remove();
-                })
-            }, 200 * i);
-        })(modelRender, item, i);
-        element.on("modelRender", function (e) {
-            let models = e.detail.models;
-            for (var j = 0; j < models.length; j++) {
-                models[j].rotation.y += 0.01;
-            }
-        })
-        renders[i] = modelRender;
-    }
-}
-
-function renderEntityShowcases() {
-    var renders = [];
-    for (var i = 0; i < 3; i++) {
-        var entity = getRandomEntity();
-        var element = $("#entityExample" + (i + 1));
-        $("#entityName" + (i + 1)).text(entity.name);
-        var entityRender = new EntityRender({
-            autoResize: true,
-            canvas: {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
-            },
-            centerCubes: true,
-            controls: {
-                enabled: true,
-                zoom: false,
-                rotate: true,
-                pan: true
-            },
-            forceContext: true
-        }, element[0]);
-        (function (entityRender, entity, i) {
-            setTimeout(function () {
-                entityRender.render([entity], function () {
-                    $("#entityPlaceholder" + (i + 1)).remove();
-                })
-            }, 200 * i);
-        })(entityRender, entity, i);
-        element.on("entityRender", function (e) {
-            let entities = e.detail.entities;
-            for (var j = 0; j < entities.length; j++) {
-                entities[j].rotation.y += 0.01;
-            }
-        })
-        renders[i] = entityRender;
-    }
-}
-
-function renderGUIShowcases() {
-    var renders = [];
-    for (var i = 0; i < 2; i++) {
-        var gui = guis[i];
-        var element = $("#guiExample" + (i + 1));
-        var guiRender = new GuiRender({
-            autoResize: true,
-            canvas: {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
-            },
-            controls: {
-                enabled: true,
-                zoom: false,
-                rotate: false,
-                pan: true
-            },
-            forceContext: true
-        }, element[0]);
-        (function (guiRender, gui, i) {
-            setTimeout(function () {
-                guiRender.render(gui, function () {
-                    $("#guiPlaceholder" + (i + 1)).remove();
-                })
-            }, 200 * i);
-        })(guiRender, gui, i);
-        renders[i] = guiRender;
-    }
-}
-
-function renderRecipeShowcases() {
-    for (var i = 0; i < 2; i++) {
-        var recipe = recipes[i];
-        var element = $("#recipeExample" + (i + 1));
-        (function (i, recipe, element) {
-            $.ajax("https://assets.mcasset.cloud/1.13/data/minecraft/recipes/" + recipe.recipe + ".json").done(function (r) {
-                var guiRender = new GuiRender({
-                    autoResize: true,
-                    canvas: {
-                        width: element[0].offsetWidth,
-                        height: element[0].offsetHeight
-                    },
-                    controls: {
-                        enabled: true,
-                        zoom: false,
-                        rotate: false,
-                        pan: true
-                    },
-                    forceContext: true
-                }, element[0]);
-                setTimeout(function () {
-                    guiRender.render(GuiRender.Helper.recipe(r, recipe.map), function () {
-                        $("#recipePlaceholder" + (i + 1)).remove();
-                    })
-                }, 200 * i);
-            });
-        })(i, recipe, element);
-    }
-}
-
-function renderResourcePackShowcases() {
-    var renders = [];
-    for (var i = 0; i < 3; i++) {
-        var pack = getRandomResourcePack();
-        var block = getRandomBlock();
-        var element = $("#resourcepackExample" + (i + 1));
-        $("#resourcepackName" + (i + 1)).text(pack.name + " / " + block);
-        $("#resourcepackName" + (i + 1)).parent().attr("href", pack.url)
-        var modelRender = new ModelRender({
-            autoResize: true,
-            canvas: {
-                width: element[0].offsetWidth,
-                height: element[0].offsetHeight
-            },
-            centerCubes: true,
-            controls: {
-                enabled: true,
-                zoom: false,
-                rotate: true,
-                pan: true
-            },
-            assetRoot: "/res/rp/" + pack.path,
-            forceContext: true
-        }, element[0]);
-        (function (modelRender, block, i) {
-            setTimeout(function () {
-                modelRender.render([{
-                    blockstate: block
-                }], function () {
-                    $("#resourcepackPlaceholder" + (i + 1)).remove();
-                })
-            }, 200 * i);
-        })(modelRender, block, i);
-        element.on("modelRender", function (e) {
-            let models = e.detail.models;
-            for (var j = 0; j < models.length; j++) {
-                models[j].rotation.y += 0.01;
-            }
-        })
-        renders[i] = modelRender;
-    }
-}
 
 function openSkinModal() {
     $("#skin-modal").find("pre").each(function () {
@@ -331,72 +92,12 @@ function openSkinModal() {
 }
 
 
-function openBlockModal() {
-    $("#block-modal").find("pre").each(function () {
-        Prism.highlightElement(this)
-    })
-    $("#block-modal").modal();
 
-    var block = getRandomBlock();
-    $("#js-example-block").text(block);
-    $("#iframe-example-block").text(block);
-
-    $("#block-modal").modal("open");
-}
-
-
-function openItemModal() {
-    $("#item-modal").find("pre").each(function () {
-        Prism.highlightElement(this)
-    })
-    $("#item-modal").modal();
-
-    var item = getRandomItem();
-    $("#js-example-item").text(item);
-    $("#iframe-example-item").text(item);
-
-    $("#item-modal").modal("open");
-}
-
-function openEntityModal() {
-    $("#entity-modal").find("pre").each(function () {
-        Prism.highlightElement(this)
-    })
-    $("#entity-modal").modal();
-
-    var entity = getRandomEntity();
-    $("#js-example-entity-model").text(entity.model);
-    $("#js-example-entity-texture").text(entity.texture);
-
-    $("#entity-modal").modal("open");
-}
-
-function openGuiModal() {
-    $("#gui-modal").find("pre").each(function () {
-        Prism.highlightElement(this)
-    })
-    $("#gui-modal").modal();
-
-    $("#gui-modal").modal("open");
-}
-
-function openRecipeModal() {
-    $("#recipe-modal").find("pre").each(function () {
-        Prism.highlightElement(this)
-    })
-    $("#recipe-modal").modal();
-
-    $("#recipe-modal").modal("open");
-}
 
 $(document).ready(function () {
     console.log("Document is ready!")
 
     randomSkins = skins.splice(0);
-    randomBlocks = blocks.splice(0);
-    randomItems = items.splice(0);
-    randomEntities = entities.splice(0)
-    randomResourcePacks = resourcePacks.splice(0);
 
     $(".jquery-version").text(JQUERY_VERSION);
     $(".three-version").text(THREE_VERSION);
